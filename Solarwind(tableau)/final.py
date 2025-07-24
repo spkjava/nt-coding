@@ -913,4 +913,4 @@ if __name__ == '__main__':
     cleanup_thread.daemon = True # ทำให้ thread จบเมื่อ process หลักจบ
     cleanup_thread.start()
 
-    app.run(debug=True) # debug=True จะช่วยในการพัฒนา แต่ไม่ควรใช้ใน Production
+    app.run(debug=True,host='0.0.0.0', port=5050) # debug=True จะช่วยในการพัฒนา แต่ไม่ควรใช้ใน Production
