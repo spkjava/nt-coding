@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solarwind - การส่งออกแบบชุด</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles from original index.html, adapted for Inter font */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F8F8; /* Very light grey/off-white for background */
+            color: #222222; /* Darker black for default text */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Use min-height to ensure full height, but allow content to expand */
+            margin: 0;
+            padding: 1rem; /* Add some padding for smaller screens */
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #FFFFFF; /* Pure white for the main container */
+            padding: 2.5rem;
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15); /* Stronger shadow */
+            width: 100%;
+            max-width: 700px; /* Adjusted max-width to fit more content */
+            text-align: center;
+            border: 1px solid #E0E0E0; /* Subtle border */
+            max-height: 95vh; /* Limit height */
+            overflow-y: auto; /* Enable scrolling for overflow */
+        }
+        h1 { /* Changed from h2 in template to h1 from original index.html */
+            color: #FFD700; /* Bright Gold/Yellow for main heading */
+            font-size: 2.25rem; /* Tailwind h2 size */
+            font-weight: 700; /* Tailwind bold */
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Subtle text shadow for depth */
+        }
+        h1 svg { /* Styling for the SVG icon next to the heading */
+            width: 2.5rem;
+            height: 2.5rem;
+            color: #FFD700;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        input[type="file"] {
+            display: none; /* Hide default file input */
+        }
+        /* Custom file upload label styling */
+        .file-upload-label {
+            background-color: #FFD700; /* Bright Gold/Yellow */
+            color: #222222; /* Darker black text on yellow */
+            padding: 12px 20px;
+            border-radius: 0.75rem; /* More rounded */
+            cursor: pointer;
+            display: inline-block;
+            transition: background-color 0.3s, transform 0.2s;
+            font-weight: 600; /* Semi-bold */
+            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3); /* Yellow shadow */
+        }
+        .file-upload-label:hover {
+            background-color: #FFC400; /* Slightly darker yellow on hover */
+            transform: translateY(-2px); /* Lift effect on hover */
+        }
+        #file-name {
+            margin-top: 10px;
+            color: #444444; /* Dark grey for file name */
+            font-size: 1rem;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+        }
+        button {
+            border: none;
+            padding: 12px 24px;
+            border-radius: 0.75rem; /* Consistent border-radius */
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: background-color 0.3s, transform 0.2s;
+            flex-grow: 1; /* Allow buttons to grow */
+            max-width: 200px; /* Limit individual button width */
+            color: #FFFFFF; /* White text for all primary buttons */
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for buttons */
+        }
+        #submit-button {
+            background-color: #4CAF50; /* Green for submit */
+        }
+        #submit-button:hover:not([disabled]) {
+            background-color: #43A047;
+            transform: translateY(-2px);
+        }
+        #cancel-button {
+            background-color: #F44336; /* Red for cancel */
+            display: none;
+        }
+        #cancel-button:hover:not([disabled]) {
+            background-color: #D32F2F;
+            transform: translateY(-2px);
+        }
+        #download-button {
+            background-color: #03A9F4; /* Blue for download */
+            display: none;
+        }
+        #download-button:hover:not([disabled]) {
+            background-color: #0288D1;
+            transform: translateY(-2px);
+        }
+        button[disabled] {
+            background-color: #AAAAAA; /* Grey for disabled */
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none; /* No shadow when disabled */
+        }
+
+        /* Status and Progress Area */
+        #status-area {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #FFF8DC; /* Cornsilk (very light yellow) */
+            border: 1px solid #FFD700; /* Gold border */
+            border-radius: 8px;
+            display: none;
+            text-align: left;
+            color: #333333; /* Dark grey for status text */
+        }
+        #status-message {
+            font-size: 1.2rem;
+            color: #B8860B; /* Darker goldenrod for status message */
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+        .progress-container {
+            width: 100%;
+            background-color: #E0E0E0;
+            border-radius: 0.5rem; /* Consistent with other elements */
+            overflow: hidden;
+            height: 1.5rem;
+            margin-top: 1rem;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2); /* Inner shadow for depth */
+        }
+        .progress-bar { /* Renamed from .progress-bar-fill for consistency */
+            height: 100%;
+            width: 0%;
+            background-color: #FFD700; /* Bright Gold/Yellow for progress */
+            transition: width 0.3s ease;
+            text-align: center;
+            color: #222222; /* Darker black text on progress bar */
+            line-height: 1.5rem; /* Vertically center text */
+            font-weight: 600; /* Semi-bold */
+            font-size: 0.875rem;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            border-radius: 0.5rem; /* Apply border-radius to the fill */
+        }
+        #progress-text {
+            margin-top: 10px;
+            color: #555555; /* Medium grey for progress text */
+            font-size: 1rem;
+        }
+
+        /* Log Area */
+        #log-area {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #000000; /* Black background for log area */
+            border: 1px solid #333333; /* Dark grey border for log */
+            border-radius: 0.75rem; /* More rounded */
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            text-align: left;
+            word-break: break-all;
+            color: #EEEEEE; /* Light grey for default log text */
+        }
+        #log-area div {
+            margin-bottom: 2px;
+        }
+        /* Log message colors for dark background */
+        .log-success { color: #8BC34A; } /* Lighter green */
+        .log-error { color: #FF7043; } /* Lighter red/orange */
+        .log-warning { color: #FFEB3B; } /* Bright yellow */
+        .log-info { color: #64B5F6; } /* Lighter blue */
+        .log-critical { color: #EF5350; font-weight: bold; } /* Brighter red */
+
+        /* Results Area */
+        #results-area {
+            margin-top: 2rem;
+            display: none;
+            text-align: left;
+            color: #222222; /* Dark black for results text */
+        }
+        #summary-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        #summary-list li {
+            margin-bottom: 5px;
+        }
+        .status-icon {
+            font-weight: bold;
+            font-size: 1.5em;
+            vertical-align: middle;
+        }
+        .success-icon {
+            color: #4CAF50; /* Green */
+        }
+        .failure-icon {
+            color: #F44336; /* Red */
+        }
+        .warning-icon {
+            color: #FF9800; /* Orange */
+        }
+
+        /* Styling for the note area */
+        .note {
+            font-size: 0.875rem;
+            color: #6B7280;
+            text-align: left;
+            width: 100%;
+            margin-top: -1rem;
+            margin-bottom: 1rem;
+            background-color: #f0f4f8;
+            border-left: 4px solid #3B82F6;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19.5 9.75a.75.75 0 0 0-.75.75v4.5a.75.75 0 0 0 .75.75h2.25a.75.75 0 0 0 .75-.75V10.5a.75.75 0 0 0-.75-.75h-2.25Z" />
+            <path fill-rule="evenodd" d="M12 2.25A2.25 2.25 0 0 0 9.75 0H5.25A2.25 2.25 0 0 0 3 2.25V9a2.25 2.25 0 0 0 2.25 2.25h4.5A2.25 2.25 0 0 0 12 9V2.25ZM12 12.75A2.25 2.25 0 0 0 9.75 10.5H5.25A2.25 2.25 0 0 0 3 12.75v6.75A2.25 2.25 0 0 0 5.25 21h4.5A2.25 2.25 0 0 0 12 18.75v-6.75Z" clip-rule="evenodd" />
+            <path d="M15 2.25a.75.75 0 0 0-.75.75V7.5a.75.75 0 0 0 .75.75h2.25a.75.75 0 0 0 .75-.75V3a.75.75 0 0 0-.75-.75H15Z" />
+            <path d="M15 12.75a.75.75 0 0 0-.75.75v4.5a.75.75 0 0 0 .75.75h2.25a.75.75 0 0 0 .75-.75v-4.5a.75.75 0 0 0-.75-.75H15Z" />
+        </svg>
+        Solarwind
+    </h1>
+    <div class="form-group">
+        <form id="upload-form"> <label for="excel_file" class="text-left w-full block mb-2">ไฟล์ Excel (พร้อมข้อมูล Node):</label>
+            <div class="note">
+                <p>⚠️ **โปรดตรวจสอบ:** ไฟล์ Excel ต้องมีหัวข้อคอลัมน์ต่อไปนี้: **Node Name**, **NodeID**, **Interface ID**, **กระทรวง / สังกัด**, **กรม / สังกัด**, **จังหวัด**, **ชื่อหน่วยงาน**</p>
+            </div>
+            <input type="file" id="excel_file" name="excel_file" accept=".xlsx, .xls" required>
+            <label for="excel_file" class="file-upload-label">
+                เลือกไฟล์ Excel
+            </label>
+            <div id="file-name">ยังไม่ได้เลือกไฟล์</div>
+        </form>
+    </div>
+    <div class="button-group">
+        <button id="submit-button" type="submit" form="upload-form" disabled>Export File</button>
+        <button id="cancel-button">ยกเลิก</button>
+        <button id="download-button" disabled>ดาวน์โหลดรายงาน (ZIP)</button>
+    </div>
+    
+    <div id="status-area">
+        <div id="status-message"></div>
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-bar"></div> </div>
+        <div id="progress-text"></div>
+        <div id="log-area"></div>
+    </div>
+
+    <div id="results-area">
+        <h3>สรุปผลการExport</h3>
+        <ul id="summary-list">
+        </ul>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById('upload-form');
+    const fileInput = document.getElementById('excel_file');
+    const submitButton = document.getElementById('submit-button');
+    const cancelButton = document.getElementById('cancel-button');
+    const downloadButton = document.getElementById('download-button');
+    const fileNameDisplay = document.getElementById('file-name');
+    const statusArea = document.getElementById('status-area');
+    const statusMessage = document.getElementById('status-message');
+    const progressBar = document.getElementById('progress-bar'); // Updated ID
+    const progressText = document.getElementById('progress-text');
+    const logArea = document.getElementById('log-area');
+    const resultsArea = document.getElementById('results-area');
+    const summaryList = document.getElementById('summary-list');
+    
+    let statusIntervalId;
+    let logIntervalId;
+    let currentJobId = null;
+
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) {
+            fileNameDisplay.textContent = fileInput.files[0].name;
+            submitButton.disabled = false;
+        } else {
+            fileNameDisplay.textContent = 'ยังไม่ได้เลือกไฟล์';
+            submitButton.disabled = true;
+        }
+        // เมื่อเลือกไฟล์ใหม่ ให้ซ่อนสถานะและผลลัพธ์เก่าทั้งหมด
+        statusArea.style.display = 'none';
+        resultsArea.style.display = 'none';
+        downloadButton.style.display = 'none';
+        downloadButton.disabled = true;
+        cancelButton.style.display = 'none';
+        summaryList.innerHTML = '';
+        logArea.innerHTML = ''; // ล้าง log เก่า
+        clearIntervals(); // หยุด interval เก่าหากมี
+    });
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        
+        const file = fileInput.files[0];
+        if (!file) {
+            alert('กรุณาเลือกไฟล์ Excel ก่อน');
+            return;
+        }
+
+        // รีเซ็ต UI ก่อนเริ่มงานใหม่
+        submitButton.disabled = true;
+        cancelButton.style.display = 'inline-block';
+        cancelButton.disabled = false;
+        downloadButton.style.display = 'none'; // ซ่อนปุ่มดาวน์โหลดเมื่อเริ่มงานใหม่
+        downloadButton.disabled = true;
+        
+        statusArea.style.display = 'block';
+        resultsArea.style.display = 'none';
+        statusMessage.innerHTML = 'กำลังอัปโหลดและเริ่มประมวลผล...';
+        progressBar.style.width = '0%';
+        progressBar.textContent = '';
+        progressText.textContent = '';
+        summaryList.innerHTML = '';
+        logArea.innerHTML = ''; // ล้าง log เก่า
+        clearIntervals(); // ตรวจสอบให้แน่ใจว่าได้หยุด interval เก่าทั้งหมดแล้ว
+
+        const formData = new FormData();
+        formData.append('excel_file', file);
+
+        try {
+            const response = await fetch('/generate_report', { // API endpoint from original index.html
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Server returned an error');
+            }
+
+            const data = await response.json();
+            currentJobId = data.job_id; // Matches original index.html's job_id
+
+            statusMessage.innerHTML = `การประมวลผลสำหรับไฟล์ <b>${file.name}</b> เริ่มต้นขึ้นแล้ว...`;
+
+            // เริ่มดึงสถานะ
+            statusIntervalId = setInterval(fetchStatus, 1000);
+            // เริ่มดึง Log
+            logIntervalId = setInterval(fetchLogs, 500);
+
+        } catch (error) {
+            statusMessage.innerHTML = `❌ เกิดข้อผิดพลาดในการเชื่อมต่อ: ${error.message}`;
+            progressBar.style.width = '0%';
+            progressBar.textContent = '';
+            progressText.textContent = '';
+            submitButton.disabled = false;
+            cancelButton.style.display = 'none';
+            downloadButton.style.display = 'none';
+            clearIntervals();
+        }
+    });
+
+    cancelButton.addEventListener('click', async () => {
+        if (currentJobId) {
+            cancelButton.disabled = true;
+            statusMessage.innerHTML = 'กำลังส่งคำขอยกเลิก...';
+            try {
+                const response = await fetch(`/cancel/${currentJobId}`, { method: 'POST' });
+                if (response.ok) {
+                    console.log('Cancel request sent successfully');
+                    // fetchStatus จะจัดการเมื่อได้รับสถานะ 'canceled'
+                } else {
+                    const errorData = await response.json();
+                    statusMessage.innerHTML = `❌ ไม่สามารถส่งคำขอยกเลิกได้: ${errorData.error || 'Unknown error'}`;
+                    cancelButton.disabled = false;
+                }
+            } catch (error) {
+                statusMessage.innerHTML = '❌ เกิดข้อผิดพลาดในการยกเลิก: ' + error.message;
+                cancelButton.disabled = false;
+            }
+        }
+    });
+
+    downloadButton.addEventListener('click', () => {
+        if (currentJobId) {
+            // เมื่อคลิกปุ่มดาวน์โหลด ให้เบราว์เซอร์เริ่มดาวน์โหลด
+            window.location.href = `/download_report/${currentJobId}`; // API endpoint from original index.html
+            // ไม่ต้อง disabled ปุ่มหลังจากดาวน์โหลด เพราะต้องการให้ดาวน์โหลดซ้ำได้
+            // และไม่เปลี่ยน statusMessage เพราะกระบวนการประมวลผลเสร็จแล้ว
+        }
+    });
+
+    function clearIntervals() {
+        if (statusIntervalId) {
+            clearInterval(statusIntervalId);
+            statusIntervalId = null;
+        }
+        if (logIntervalId) {
+            clearInterval(logIntervalId);
+            logIntervalId = null;
+        }
+        cancelButton.style.display = 'none'; // ซ่อนปุ่มยกเลิกเมื่อไม่มีการประมวลผล
+    }
+
+    async function fetchStatus() {
+        if (!currentJobId) return;
+
+        try {
+            const statusResponse = await fetch(`/status/${currentJobId}`); // API endpoint from original index.html
+            const statusData = await statusResponse.json();
+
+            if (statusData.error) {
+                statusMessage.innerHTML = `❌ เกิดข้อผิดพลาด: ${statusData.error}`;
+                progressBar.style.width = '0%';
+                progressBar.textContent = '';
+                progressText.textContent = '';
+                clearIntervals();
+                submitButton.disabled = false;
+                downloadButton.style.display = 'none';
+                return;
+            }
+
+            if (statusData.canceled) {
+                statusMessage.innerHTML = '⛔ การประมวลผลถูกยกเลิกแล้ว';
+                progressBar.style.width = '0%';
+                progressBar.textContent = '';
+                progressText.textContent = '';
+                clearIntervals();
+                submitButton.disabled = false;
+                downloadButton.style.display = 'none';
+                return;
+            }
+
+            if (statusData.total > 0) {
+                const processed = statusData.processed;
+                const total = statusData.total;
+                const percentage = (processed / total) * 100;
+                
+                progressBar.style.width = `${percentage}%`;
+                progressBar.textContent = `${Math.round(percentage)}%`;
+                progressText.textContent = `ประมวลผลแล้ว ${processed} จาก ${total} รายการ`;
+
+                if (statusData.completed) {
+                    statusMessage.innerHTML = '✅ Exportเสร็จสมบูรณ์!';
+                    clearIntervals();
+                    submitButton.disabled = false;
+                    
+                    // แสดงปุ่มดาวน์โหลดเมื่อเสร็จสิ้น และมี zip_file_path
+                    if (statusData.zip_file_path) {
+                        downloadButton.style.display = 'inline-block';
+                        downloadButton.disabled = false; // ทำให้สามารถดาวน์โหลดซ้ำได้
+                    } else {
+                        // กรณีเสร็จสิ้นแต่ไม่มีไฟล์ ZIP (อาจเกิดข้อผิดพลาดในการสร้าง ZIP)
+                        downloadButton.style.display = 'none';
+                        downloadButton.disabled = true;
+                        statusMessage.innerHTML += '<br><span style="color:red; font-size:0.9em;">ไม่สามารถสร้างไฟล์ ZIP ได้ โปรดตรวจสอบ Log หรือ Terminal</span>';
+                    }
+
+                    // คำนวณสรุปผล
+                    let csvSuccessCount = 0;
+                    let csvFailedFiles = [];
+                    let pdfSuccessCount = 0;
+                    let pdfFailedFiles = [];
+                    let skipCount = 0;
+                    
+                    if (statusData.results && statusData.results.length > 0) {
+                        statusData.results.forEach(result => {
+                            if (result.error_message === "ข้อมูล NodeID หรือ Interface ID ไม่สมบูรณ์") {
+                                skipCount++;
+                            } else {
+                                if (result.csv_success) {
+                                    csvSuccessCount++;
+                                } else {
+                                    const identifier = (result.node_name && result.node_name.includes('_') && result.node_name.split('_').length >= 3) ? 
+                                        `(${result.node_name.split('_').slice(-2).join('/')})` : 
+                                        '';
+                                    csvFailedFiles.push(`${result.node_name || 'ไม่ระบุชื่อ'} ${identifier}`);
+                                }
+                                if (result.pdf_success) {
+                                    pdfSuccessCount++;
+                                } else {
+                                    const identifier = (result.node_name && result.node_name.includes('_') && result.node_name.split('_').length >= 3) ? 
+                                        `(${result.node_name.split('_').slice(-2).join('/')})` : 
+                                        '';
+                                    pdfFailedFiles.push(`${result.node_name || 'ไม่ระบุชื่อ'} ${identifier}`);
+                                }
+                            }
+                        });
+                    }
+
+                    summaryList.innerHTML = `
+                        <li><span class="status-icon success-icon">✔</span> <b>CSV:</b> Exportสำเร็จ ${csvSuccessCount} ไฟล์</li>
+                        <li><span class="status-icon success-icon">✔</span> <b>PDF:</b> Exportสำเร็จ ${pdfSuccessCount} ไฟล์</li>
+                    `;
+                    
+                    if (skipCount > 0) {
+                        const skipItem = document.createElement('li');
+                        skipItem.innerHTML = `<span class="status-icon warning-icon">⚠</span> <b>ข้ามการประมวลผล:</b> ${skipCount} รายการ (NodeID/Interface ID ไม่สมบูรณ์)`;
+                        summaryList.appendChild(skipItem);
+                    }
+
+                    if (csvFailedFiles.length > 0) {
+                        const csvFailedItem = document.createElement('li');
+                        csvFailedItem.innerHTML = `<span class="status-icon failure-icon">✘</span> <b>CSV:</b> Exportไม่สำเร็จ ${csvFailedFiles.length} ไฟล์`;
+                        summaryList.appendChild(csvFailedItem);
+                        
+                        const failedList = document.createElement('ul');
+                        failedList.style.fontSize = '0.9em';
+                        failedList.style.marginLeft = '20px';
+                        csvFailedFiles.forEach(fileName => {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = fileName;
+                            failedList.appendChild(listItem);
+                        });
+                        summaryList.appendChild(failedList);
+                    }
+
+                    if (pdfFailedFiles.length > 0) {
+                        const pdfFailedItem = document.createElement('li');
+                        pdfFailedItem.innerHTML = `<span class="status-icon failure-icon">✘</span> <b>PDF:</b> Exportไม่สำเร็จ ${pdfFailedFiles.length} ไฟล์`;
+                        summaryList.appendChild(pdfFailedItem);
+                        
+                        const failedList = document.createElement('ul');
+                        failedList.style.fontSize = '0.9em';
+                        failedList.style.marginLeft = '20px';
+                        pdfFailedFiles.forEach(fileName => {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = fileName;
+                            failedList.appendChild(listItem);
+                        });
+                        summaryList.appendChild(failedList);
+                    }
+
+                    resultsArea.style.display = 'block';
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching status:", error);
+            statusMessage.innerHTML = `❌ ข้อผิดพลาดในการอัปเดตสถานะ: ${error.message}`;
+            clearIntervals();
+            submitButton.disabled = false;
+            downloadButton.style.display = 'none';
+        }
+    }
+
+    async function fetchLogs() {
+        if (!currentJobId) return;
+        try {
+            const logResponse = await fetch(`/logs/${currentJobId}`); // API endpoint from original index.html
+            const logData = await logResponse.json();
+            if (logData.logs && logData.logs.length > 0) {
+                // เก็บข้อความ log ที่มีอยู่แล้วเพื่อตรวจสอบการซ้ำซ้อน
+                const existingLogMessages = new Set(Array.from(logArea.children).map(div => div.textContent));
+
+                logData.logs.forEach(log => {
+                    // ตรวจสอบว่า logEntry มีอยู่แล้วหรือไม่ เพื่อป้องกันการเพิ่มซ้ำ
+                    if (!existingLogMessages.has(log)) {
+                        const logEntry = document.createElement('div');
+                        logEntry.textContent = log; 
+
+                        // Assign class based on log content for coloring
+                        if (log.startsWith('✅')) {
+                            logEntry.classList.add('log-success');
+                        } else if (log.startsWith('❌')) {
+                            logEntry.classList.add('log-error');
+                        } else if (log.startsWith('⚠️') || log.startsWith('⛔')) {
+                            logEntry.classList.add('log-warning');
+                        } else if (log.startsWith('📊') || log.startsWith('▶') || log.startsWith('📂') || log.startsWith('📥') || log.startsWith('🗑️') || log.startsWith('🧹') || log.startsWith('✨') || log.startsWith('📁')) {
+                            logEntry.classList.add('log-info');
+                        } else {
+                            logEntry.classList.add('log-info'); // Default to info color
+                        }
+                        
+                        logArea.appendChild(logEntry);
+                        existingLogMessages.add(log); // เพิ่ม log ใหม่เข้าไปใน Set
+                    }
+                });
+                logArea.scrollTop = logArea.scrollHeight; // เลื่อนไปด้านล่างสุด
+            }
+        } catch (error) {
+            console.error("Error fetching logs:", error);
+            // ไม่ต้องแสดง error message บน UI ถ้าดึง log ไม่ได้
+        }
+    }
+</script>
+
+</body>
+</html>
